@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "File Tree",
+  "name": "This app will show a file tree fetched from the server",
   "icons": [
     {
       "src": "favicon.ico",
