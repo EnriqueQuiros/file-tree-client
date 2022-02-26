@@ -1,8 +1,9 @@
 import { ReactComponent as FolderIcon } from "../assets/folder.svg";
 import { ReactComponent as FolderOpenIcon } from "../assets/folder-open.svg";
 import { ReactComponent as DocumentIcon } from "../assets/document.svg";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import configData from "../config.json";
+import AppContext from "../store/appContext";
 
 export interface ILeaf {
   previous: string;
@@ -24,16 +25,27 @@ const Leaf = ({ props }: ILeafProps) => {
   const [previewPic, setPreviewPic] = useState("");
   const [previewTxt, setPreviewTxt] = useState("");
 
+  const state = useContext(AppContext);
+
   const toggleNode = () => {
     if (props.type === "directory") {
       if (!isOpen) {
-        const path = `${previous || ""}${name}`;
-        const noSlash = path.replace(/\//g, "~");
+        let stateRoot = state.state.root;
+        if (stateRoot !== "") {
+          stateRoot = stateRoot + "/";
+        }
 
+        const path = `${stateRoot}${previous || ""}${name}`;
+
+        const noSlash = path.replace(/\//g, "~");
+        console.log(
+          "loading children",
+          configData.API_URL + "/tree/" + noSlash + "/"
+        );
         fetch(configData.API_URL + "/tree/" + noSlash + "/")
           .then((response) => response.json())
           .then((json) => {
-            setChildren(json.children);
+            setChildren(json?.children);
             setIsOpen(true);
           });
       } else {
