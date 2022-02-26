@@ -1,5 +1,3 @@
-import { useIsFetching } from "react-query";
-import useFetch from "../hooks/useFetch";
 import useTree from "../hooks/useTree";
 import Leaf from "./leaf";
 
