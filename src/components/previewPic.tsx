@@ -3,7 +3,6 @@ import config from "../config.json";
 import AppContext from "../store/appContext";
 import { isImage } from "../utils/utils";
 
-
 const PreviewPic = () => {
   const state = useContext(AppContext);
   const [previewPic, setPreviewPic] = useState("");

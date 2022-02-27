@@ -21,8 +21,6 @@ describe("renders", () => {
   });
 });
 
-
-
 const leaf = {
   path: "/test-folder",
   previous: "",

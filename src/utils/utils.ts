@@ -9,7 +9,6 @@ export const download = (blob: Blob, name: string) => {
   document.body.removeChild(link);
 };
 
-
 // Generates a path that can be passed as param
 export const getPath = (root: string, previous: string, name: string) => {
   let stateRoot = root;
@@ -18,12 +17,17 @@ export const getPath = (root: string, previous: string, name: string) => {
   }
 
   const path = `${stateRoot}${previous || ""}${name}`;
-  return path.replace(/\//g, "~") + "/";
+  return getNoSlashPath(path);
 };
-
 
 // Checks if extension is from a image type
 export const isImage = (ext: string) => {
   const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp"];
   return imageExtensions.includes(ext);
+};
+
+// Returns a no slash version of path
+export const getNoSlashPath = (path: string) => {
+  return path.replace(/\//g, "~");
 }
+

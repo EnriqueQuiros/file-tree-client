@@ -1,7 +1,8 @@
 import { useContext, useState } from "react";
-import config from "../config.json";
+import { lazyFetchChildren } from "../hooks/useLazyNode";
+
 import AppContext from "../store/appContext";
-import { getPath, isImage } from "../utils/utils";
+import { getNoSlashPath, isImage } from "../utils/utils";
 import TreeIcon from "./treeIcon";
 
 export interface ILeaf {
@@ -11,7 +12,7 @@ export interface ILeaf {
   type: string;
   extension: string;
   children: ILeaf[];
-} 
+}
 
 interface ILeafProps {
   props: ILeaf;
@@ -24,25 +25,19 @@ const Leaf = ({ props }: ILeafProps) => {
   const state = useContext(AppContext);
   const [isLoading, setIsloading] = useState(false);
 
-  const toggleNode = () => {
+  const toggleNode = async () => {
     if (props.type === "directory") {
       if (!isOpen) {
         setIsloading(true);
-        fetch(
-          config.API_URL + "/tree/" + getPath(state.state.root, previous, name)
-        )
-          .then((response) => response.json())
-          .then((json) => {
-            setChildren(json?.children);
-            setIsOpen(true);
-            setIsloading(false);
-          });
+        setChildren(await lazyFetchChildren(state.state.root, previous, name));
+        setIsloading(false);
+        setIsOpen(true);
       } else {
         setIsOpen(false);
       }
     } else {
       if (type === "file") {
-        const noSlash = props.path.replace(/\//g, "~");
+        const noSlash = getNoSlashPath(props.path);
         state.setPreview(noSlash);
         state.setPreviewExt(props.extension);
         state.setPreviewName(props.name);
@@ -60,13 +55,17 @@ const Leaf = ({ props }: ILeafProps) => {
         className="flex p-0.5 hover:bg-white cursor-pointer select-none"
         onClick={() => toggleNode()}
       >
-        <TreeIcon type={type} isOpen={isOpen} isImage={isImage(props.extension)} />
+        <TreeIcon
+          type={type}
+          isOpen={isOpen}
+          isImage={isImage(props.extension)}
+        />
         {name}
       </div>
 
       {children && children.length > 0 && isOpen && (
         <div className="flex flex-col">
-          {children.map((node: any, key: number) => {
+          {children.map((node: ILeaf, key: number) => {
             node.previous = `${previous || ""}${name}/`;
             return (
               <div className="ml-6" key={key}>

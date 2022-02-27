@@ -32,7 +32,11 @@ const PreviewFile = () => {
 
   return (
     <>
-      {previewFile !== "" && <div className="text-justify" data-testid="previewTxt">{previewFile}</div>}
+      {previewFile !== "" && (
+        <div className="text-justify" data-testid="previewTxt">
+          {previewFile}
+        </div>
+      )}
     </>
   );
 };

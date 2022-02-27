@@ -2,13 +2,15 @@
 
 1.- npm install
 2.- npm start
+3.- to access to the API the server must be running (file-tree-server)
 
-# TODO
-- tests
-- linting
-- documentation
-- en modo pequeño la imagen debería ir arriba del todo
-- tratamiento de errores
+# Tools used
+- React
+- TailwindCSS
+- React-query
+- Typescript
+- Jest
+
 
 
 

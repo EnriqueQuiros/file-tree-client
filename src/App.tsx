@@ -29,7 +29,7 @@ function App() {
   return (
     <AppContext.Provider value={value}>
       <QueryClientProvider client={queryClient}>
-        <div className="p-6 min-h-screen min-w-fit bg-gray-100 sm:flex sm:gap-10 sm:justify-between">
+        <div className="p-6 min-h-screen min-w-fit bg-gray-100 flex flex-col-reverse sm:flex-row sm:gap-10 sm:justify-between">
           <div className="shrink-0">
             <Tree />
           </div>
