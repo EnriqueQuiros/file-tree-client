@@ -51,7 +51,7 @@ const Leaf = ({ props }: ILeafProps) => {
 
   return (
     <>
-      <div
+      <button
         className="flex p-0.5 hover:bg-white cursor-pointer select-none"
         onClick={() => toggleNode()}
       >
@@ -61,7 +61,7 @@ const Leaf = ({ props }: ILeafProps) => {
           isImage={isImage(props.extension)}
         />
         {name}
-      </div>
+      </button>
 
       {children && children.length > 0 && isOpen && (
         <div className="flex flex-col">
