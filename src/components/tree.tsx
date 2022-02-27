@@ -5,31 +5,27 @@ import AppContext from "../store/appContext";
 
 const Tree = () => {
   const [rootPath, setRootPath] = useState("");
-  const { data, refetch } = useTree(rootPath);
+  const { data, isLoading, refetch } = useTree(rootPath);
   const state = useContext(AppContext);
 
   useEffect(() => {
-    console.log("Root path: ", rootPath);
     state.setRoot(rootPath);
     refetch();
-  }, [refetch, rootPath]);
+  }, [refetch, rootPath, state]);
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div>
-      <div className="mb-1">
-        <div>
-          <input
-            id="username"
-            type="text"
-            placeholder="Enter root path"
-            defaultValue={data?.path}
-            onChange={(e) => {
-              setRootPath(e.target.value);
-            }}
-            className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-200 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring"
-          />
-        </div>
-      </div>
+      <input
+        id="username"
+        type="text"
+        placeholder="Enter root path"
+        onChange={(e) => {
+          setRootPath(e.target.value);
+        }}
+        className="w-full px-4 py-2 mt-2 mb-3 bg-white border border-gray-200 rounded-md   focus:border-blue-400 focus:ring-blue-300 focus:ring-opacity-40  focus:outline-none focus:ring"
+      />
 
       {data?.children?.map((node: any, key: number) => {
         return (

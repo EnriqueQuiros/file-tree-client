@@ -1,7 +1,9 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
-it('renders welcome message', () => {
-  render(<App />);
-  expect(screen.getByText('Learn React')).toBeInTheDocument();
+describe("renders", () => {
+  it("renders", () => {
+    render(<App />);
+    expect(screen.getByPlaceholderText("Enter root path")).toBeInTheDocument();
+  });
 });

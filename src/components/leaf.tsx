@@ -1,9 +1,8 @@
-import { ReactComponent as FolderIcon } from "../assets/folder.svg";
-import { ReactComponent as FolderOpenIcon } from "../assets/folder-open.svg";
-import { ReactComponent as DocumentIcon } from "../assets/document.svg";
 import { useContext, useState } from "react";
-import configData from "../config.json";
+import config from "../config.json";
 import AppContext from "../store/appContext";
+import { getPath, isImage } from "../utils/utils";
+import TreeIcon from "./treeIcon";
 
 export interface ILeaf {
   previous: string;
@@ -12,7 +11,7 @@ export interface ILeaf {
   type: string;
   extension: string;
   children: ILeaf[];
-}
+} 
 
 interface ILeafProps {
   props: ILeaf;
@@ -22,82 +21,38 @@ const Leaf = ({ props }: ILeafProps) => {
   const { previous, name, type } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [children, setChildren] = useState(props.children);
-  const [previewPic, setPreviewPic] = useState("");
-  const [previewTxt, setPreviewTxt] = useState("");
-
   const state = useContext(AppContext);
+  const [isLoading, setIsloading] = useState(false);
 
   const toggleNode = () => {
     if (props.type === "directory") {
       if (!isOpen) {
-        let stateRoot = state.state.root;
-        if (stateRoot !== "") {
-          stateRoot = stateRoot + "/";
-        }
-
-        const path = `${stateRoot}${previous || ""}${name}`;
-
-        const noSlash = path.replace(/\//g, "~");
-        console.log(
-          "loading children",
-          configData.API_URL + "/tree/" + noSlash + "/"
-        );
-        fetch(configData.API_URL + "/tree/" + noSlash + "/")
+        setIsloading(true);
+        fetch(
+          config.API_URL + "/tree/" + getPath(state.state.root, previous, name)
+        )
           .then((response) => response.json())
           .then((json) => {
             setChildren(json?.children);
             setIsOpen(true);
+            setIsloading(false);
           });
       } else {
-        setChildren([]);
         setIsOpen(false);
       }
     } else {
       if (type === "file") {
-        const imageExtensions = [
-          ".jpg",
-          ".jpeg",
-          ".png",
-          ".gif",
-          ".bmp",
-          ".svg",
-          ".webp",
-          ".ico",
-        ];
-
         const noSlash = props.path.replace(/\//g, "~");
-        if (imageExtensions.includes(props.extension)) {
-          setPreviewPic(noSlash);
-        }
-
-        if (props.extension === ".txt") {
-          fetch(configData.API_URL + "/file/" + noSlash + "/")
-            .then((response) => response.text())
-            .then((text) => {
-              setPreviewTxt(text);
-            });
-        }
-
-        if (props.extension === ".bak") {
-          fetch(configData.API_URL + "/file/" + noSlash + "/")
-            .then((response) => response.blob())
-            .then((blob) => {
-              // download blob
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.style.display = "none";
-              a.href = url;
-              a.download = props.name;
-              document.body.appendChild(a);
-              a.click();
-              setPreviewTxt("");
-              window.URL.revokeObjectURL(url);
-              document.body.removeChild(a);
-            });
-        }
+        state.setPreview(noSlash);
+        state.setPreviewExt(props.extension);
+        state.setPreviewName(props.name);
       }
     }
   };
+
+  if (isLoading) {
+    return <strong>LOADING...</strong>;
+  }
 
   return (
     <>
@@ -105,24 +60,8 @@ const Leaf = ({ props }: ILeafProps) => {
         className="flex p-0.5 hover:bg-white cursor-pointer select-none"
         onClick={() => toggleNode()}
       >
-        {type === "file" ? (
-          <DocumentIcon className="h-6 w-6 mr-1" />
-        ) : isOpen ? (
-          <FolderOpenIcon className="h-6 w-6 mr-1" />
-        ) : (
-          <FolderIcon className="h-6 w-6 mr-1" />
-        )}
+        <TreeIcon type={type} isOpen={isOpen} isImage={isImage(props.extension)} />
         {name}
-
-        {previewPic !== "" && (
-          <img
-            className="h-24 w-24"
-            crossOrigin="anonymous"
-            src={`${configData.API_URL}/file/${previewPic}/`}
-            alt=""
-          />
-        )}
-        {previewTxt !== "" && <div>{previewTxt}</div>}
       </div>
 
       {children && children.length > 0 && isOpen && (

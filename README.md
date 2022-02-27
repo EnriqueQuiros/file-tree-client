@@ -7,7 +7,8 @@
 - tests
 - linting
 - documentation
-- REACT QUERY
+- en modo pequeño la imagen debería ir arriba del todo
+- tratamiento de errores
 
 
 
